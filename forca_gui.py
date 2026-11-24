@@ -55,12 +55,14 @@ lista_palavras = carregar_palavras("palavras.txt")
 palavra_secreta = escolher_palavra(lista_palavras)
 letras_tentadas = []
 erros = 0
+vitorias = 0
+derrotas = 0
 botoes_letras = {}
 jogo_encerrado = False
 
 
 def encerrar_jogo(vitoria, desistiu=False):
-    global jogo_encerrado
+    global jogo_encerrado, vitorias, derrotas
 
     if jogo_encerrado:
         return
@@ -68,11 +70,16 @@ def encerrar_jogo(vitoria, desistiu=False):
     jogo_encerrado = True
 
     if vitoria:
+        vitorias += 1
         texto_palavra.config(text="Vitória!")
-    elif desistiu:
-        texto_palavra.config(text=f"Você desistiu! Palavra: {palavra_secreta}")
     else:
-        texto_palavra.config(text=f"Derrota! Palavra: {palavra_secreta}")
+        derrotas += 1
+        if desistiu:
+            texto_palavra.config(text=f"Você desistiu! Palavra: {palavra_secreta}")
+        else:
+            texto_palavra.config(text=f"Derrota! Palavra: {palavra_secreta}")
+
+    texto_placar.config(text=f"Vitórias: {vitorias} | Derrotas: {derrotas}")
 
     for botao in botoes_letras.values():
         botao.config(state="disabled")
@@ -162,6 +169,13 @@ texto_erros = tk.Label(
     font=("Arial", 14)
 )
 texto_erros.pack(pady=5)
+
+texto_placar = tk.Label(
+    janela,
+    text=f"Vitórias: {vitorias} | Derrotas: {derrotas}",
+    font=("Arial", 14)
+)
+texto_placar.pack(pady=5)
 
 teclado = tk.Frame(janela)
 teclado.pack(pady=20)
