@@ -27,7 +27,7 @@ def atualizar_display(palavra, letras_tentadas):
     display = ""
 
     for letra in palavra:
-        if letra in letras_tentadas:
+        if not letra.isalpha() or letra in letras_tentadas:
             display += letra + " "
         else:
             display += "_ "
@@ -36,7 +36,10 @@ def atualizar_display(palavra, letras_tentadas):
 
 
 def verificar_vitoria(palavra, letras_tentadas):
-    return all(letra in letras_tentadas for letra in palavra)
+    return all(
+        not letra.isalpha() or letra in letras_tentadas
+        for letra in palavra
+    )
 
 
 def desenhar_boneco(erros):
@@ -227,7 +230,7 @@ teclado = tk.Frame(janela)
 teclado.pack(pady=20)
 teclado.configure(bg=COR_FUNDO)
 
-letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÃÂÉÊÍÓÔÕÚÜÇ"
 
 for i, letra in enumerate(letras):
     botao = tk.Button(
