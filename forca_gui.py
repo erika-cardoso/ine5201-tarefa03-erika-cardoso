@@ -59,7 +59,7 @@ botoes_letras = {}
 jogo_encerrado = False
 
 
-def encerrar_jogo(vitoria):
+def encerrar_jogo(vitoria, desistiu=False):
     global jogo_encerrado
 
     if jogo_encerrado:
@@ -69,11 +69,40 @@ def encerrar_jogo(vitoria):
 
     if vitoria:
         texto_palavra.config(text="Vitória!")
+    elif desistiu:
+        texto_palavra.config(text=f"Você desistiu! Palavra: {palavra_secreta}")
     else:
         texto_palavra.config(text=f"Derrota! Palavra: {palavra_secreta}")
 
     for botao in botoes_letras.values():
         botao.config(state="disabled")
+
+    botao_desistir.config(state="disabled")
+
+
+def novo_jogo():
+    global palavra_secreta, erros, jogo_encerrado
+
+    palavra_secreta = escolher_palavra(lista_palavras)
+    letras_tentadas.clear()
+    erros = 0
+    jogo_encerrado = False
+
+    desenhar_boneco(erros)
+    texto_palavra.config(
+        text=atualizar_display(palavra_secreta, letras_tentadas)
+    )
+    texto_erros.config(text="Tentativas restantes: 6")
+
+    for botao in botoes_letras.values():
+        botao.config(state="normal")
+
+    botao_desistir.config(state="normal")
+
+
+def desistir():
+    if not jogo_encerrado:
+        encerrar_jogo(False, desistiu=True)
 
 
 def tentar_letra(letra):
@@ -149,5 +178,24 @@ for i, letra in enumerate(letras):
     )
     botao.grid(row=i // 7, column=i % 7, padx=3, pady=3)
     botoes_letras[letra] = botao
+
+controles = tk.Frame(janela)
+controles.pack(pady=10)
+
+botao_novo_jogo = tk.Button(
+    controles,
+    text="Novo jogo",
+    font=("Arial", 12),
+    command=novo_jogo
+)
+botao_novo_jogo.grid(row=0, column=0, padx=10)
+
+botao_desistir = tk.Button(
+    controles,
+    text="Desistir",
+    font=("Arial", 12),
+    command=desistir
+)
+botao_desistir.grid(row=0, column=1, padx=10)
 
 janela.mainloop()
