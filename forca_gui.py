@@ -25,6 +25,10 @@ def atualizar_display(palavra, letras_tentadas):
     return display
 
 
+def verificar_vitoria(palavra, letras_tentadas):
+    return all(letra in letras_tentadas for letra in palavra)
+
+
 def desenhar_boneco(erros):
     desenho.delete("all")
 
@@ -52,10 +56,31 @@ palavra_secreta = escolher_palavra(lista_palavras)
 letras_tentadas = []
 erros = 0
 botoes_letras = {}
+jogo_encerrado = False
+
+
+def encerrar_jogo(vitoria):
+    global jogo_encerrado
+
+    if jogo_encerrado:
+        return
+
+    jogo_encerrado = True
+
+    if vitoria:
+        texto_palavra.config(text="Vitória!")
+    else:
+        texto_palavra.config(text=f"Derrota! Palavra: {palavra_secreta}")
+
+    for botao in botoes_letras.values():
+        botao.config(state="disabled")
 
 
 def tentar_letra(letra):
     global erros
+
+    if jogo_encerrado:
+        return
 
     letras_tentadas.append(letra.lower())
 
@@ -68,6 +93,11 @@ def tentar_letra(letra):
     )
     texto_erros.config(text=f"Tentativas restantes: {6 - erros}")
     botoes_letras[letra].config(state="disabled")
+
+    if verificar_vitoria(palavra_secreta, letras_tentadas):
+        encerrar_jogo(True)
+    elif erros >= 6:
+        encerrar_jogo(False)
 
 
 janela = tk.Tk()
